@@ -22,11 +22,17 @@ def main():
     if not tasks:
         st.write("No tasks yet. Add a task above.")
     else:
+        # Render tasks with checkboxes; collect indices of checked tasks
+        to_remove = []
         for i, task in enumerate(tasks):
-            checked = st.checkbox(task, key=f"task_{i}")
-            if checked:
-                st.session_state["tasks"].pop(i)
-                st.experimental_rerun()
+            if st.checkbox(task, key=f"task_{i}"):
+                to_remove.append(i)
+        # Remove checked tasks in reverse order to avoid index shifts
+        for i in reversed(to_remove):
+            key = f"task_{i}"
+            if key in st.session_state:
+                del st.session_state[key]
+            st.session_state["tasks"].pop(i)
 
 
 if __name__ == "__main__":
